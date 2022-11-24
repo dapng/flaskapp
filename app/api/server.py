@@ -4,6 +4,8 @@ import argparse
 
 from flask import Flask, request
 
+from utils import config_parser
+
 
 class Server:
 
@@ -17,8 +19,14 @@ class Server:
         self.app.add_url_rule('/home', view_func=self.get_home)
 
 
+    def run_server(self):
+        self.server = threading.Thread(target=self.app.run, kwargs={'host': self.host, 'post': self.port})
+        self.server.start
+        return self.servers
+        
+
     def shutdown_server(self):
-        request.get('f'http://{self.host}:{self.port}/shutdown)
+        request.get(f'http://{self.host}:{self.port}/shutdown')
 
 
     def shutdown(self):
@@ -29,3 +37,22 @@ class Server:
 
     def get_home(self):
         return 'Hello, server api!'
+
+    
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser() 
+    parser.add_argument('--config', type=str, dest='config')
+
+    args = parser.parse_args()
+
+    config = config_parser(args.config)
+
+    server_host = config['SERVER_HOST']
+    server_port = config['SERVER_PORT']
+
+    server = Server(
+        host=server_host,
+        port=server_port
+    )
+    server.run_server()
