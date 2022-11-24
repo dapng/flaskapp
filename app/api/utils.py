@@ -3,6 +3,6 @@ def config_parser(config_path):
         config = dict()
         lines = config_file.readlines()
         for line in lines:
-            k, v = line.spli(' = ')
-            config[k] = v
+            k, v = line.split(' = ')
+            config[k] = v.split('\n')[0]
         return config
